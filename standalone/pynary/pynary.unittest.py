@@ -11,9 +11,9 @@ class SimpleLIBRegressionTestCase(unittest.TestCase):
     def setUp(self):
         tools = toolchain.ToolChain()
         os.mkdir("test/output/")
-        tools.compile(["test/math.cpp", "test/test.cpp"], "test/output/")
+        tools.compile(["test/math.cpp", "test/test_dll.cpp"], "test/output/")
         tools.link(["test/output/math.obj"],"test/output/math.lib",lib=1)
-        tools.link(["test/output/test.obj","test/output/math.lib"],"test/output/test.exe")
+        tools.link(["test/output/test_dll.obj","test/output/math.lib"],"test/output/test.dll",dll=1,exports=["MyFunction"])
         
     def tearDown(self):
         for file in glob.glob("test/output/*"):
@@ -28,7 +28,7 @@ class SimpleLIBRegressionTestCase(unittest.TestCase):
     
     def testCompilation(self):
         files = glob.glob("test\\output\\*")
-        for file in ["math.lib","test.exe"]:            
+        for file in ["math.lib","test.dll"]:            
             assert os.path.join("test\\output", file) in files        
         
 

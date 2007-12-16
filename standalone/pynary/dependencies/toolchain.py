@@ -24,7 +24,15 @@ class Linker(Tool):
     
     def run(self, files, output):
         os.spawnv(os.P_WAIT, self.path, self.options + files + [ "/OUT:%s" % output ])
-
+        
+class DllLinker(Linker):
+    def __init__(self):
+        Linker.__init__(self)
+        self.options.append("/DLL")
+        
+    def run(self, files, output,exports=[]):
+        os.spawnv(os.P_WAIT, self.path, self.options + ["/EXPORT:%s" % export for export in exports] + files + [ "/OUT:%s" % output ])
+        
 class Librarian(Tool):
     def __init__(self):
         self.path = os.path.join(sdkdir,"lib.exe")
@@ -37,13 +45,18 @@ class ToolChain:
     def __init__(self):
         self.compiler = Compiler()
         self.linker = Linker()
+        self.dll_linker = DllLinker()
         self.librarian = Librarian()
     
     def compile(self,files, outputdir):
         self.compiler.run(files,outputdir)
     
-    def link(self,files, outputfile, lib=0):
+    def link(self,files, outputfile, lib=0,dll=0, exports=[]):
         if lib:
             self.librarian.run(files,outputfile)
+        elif dll:
+            self.dll_linker.run(files,outputfile,exports)
         else:
             self.linker.run(files,outputfile)
+            
+            

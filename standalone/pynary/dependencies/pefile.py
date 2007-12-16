@@ -1093,6 +1093,11 @@ class SymbolStructure(Structure):
     
     def is_function(self):
         return (IMAGE_SYMBOL_DTYPES[self.Type >> 4] == "IMAGE_SYM_DTYPE_FUNCTION")
+   
+    def has_function_implementation(self):
+        return \
+            self.StorageClass == IMAGE_SYMBOL_CLASSES['IMAGE_SYM_CLASS_EXTERNAL'] \
+            and self.SectionNumber != IMAGE_SYM_UNDEFINED
             
     def get_function_code(self):
         if not self.is_function():
