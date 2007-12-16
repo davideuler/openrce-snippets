@@ -34,7 +34,7 @@ class Instruction:
         return self.type in [pydasm.INSTRUCTION_TYPE_JMP,pydasm.INSTRUCTION_TYPE_JMPC,pydasm.INSTRUCTION_TYPE_LOOP,pydasm.INSTRUCTION_TYPE_RET,pydasm.INSTRUCTION_TYPE_INT,pydasm.INSTRUCTION_TYPE_CALL]
     
     def is_relative(self):
-        #todo: add AM_* flags to pydasm.c
+        ##TODO: add AM_* flags to pydasm.c
         AM_J = 0x70000
         return not self.has_relocation() and self.op1 and (self.op1.flags & AM_J == AM_J) 
         
@@ -170,9 +170,15 @@ class Function:
     
     def add_exit(self, block):
         self.__exit_blocks__.add(block)
-
+    def __remove_exit__(self, block):
+        self.__exit_blocks__.remove(block)
     def does_return(self):
         pass
+    def getBasicBlocks(self):
+        return self.__basic_blocks__
+    
+    def getExits(self):
+        return self.__exit_blocks__
         
 class BasicBlock:
     
@@ -214,7 +220,8 @@ class BasicBlock:
                         #When a flow jump lands in the middle of a previously created block. Truncate the previous block at 
                         #our instruction, and set it's linear exit to our current block.
                         #It's flow exit also needs to be deleted, as flow control is always the last instruction in a block. We 
-                        #could just copy the flow exit to our new block, but it'll eventually be discovered anyhow, so...
+                        #could just copy the flow exit to our new block, but it'll eventually be discovered anyhow. One more
+                        #thing we need to do is to remove it from the list of exits on the parent function...
                         pos = instruction_block.__instructions__.index(instruction)
                         dumping = instruction.__basicblock__.__instructions__[pos:]
                         instruction_block.__instructions__ = instruction_block.__instructions__[:pos]               
@@ -223,6 +230,7 @@ class BasicBlock:
                         
                         instruction_block.set_linear_exit(current_block)                       
                         instruction_block.set_flow_exit(None)
+                        function.__remove_exit__(instruction_block)
                     else:
                         #ERROR! This state should never occur!
                         raise Exception("Error... something went horribly wrong!")
@@ -252,7 +260,7 @@ class BasicBlock:
                 break
                 
             first = 0    
-        function.__basic_blocks__[current_block.__block_start__] = current_block
+        function.__basic_blocks__[current_block.__block_start__ - function.__symbol__.Value] = current_block
         current_block.__function__ = function
         return current_block
         
@@ -299,7 +307,30 @@ class BasicBlock:
         for instruction in self.__instructions__:
             result += instruction.length
         return result
-
+        
+    def getFunction(self):
+        return self.__function__
+    
+    def getInstructionLength(self):
+        return len(self.__instructions__)
+        
+    def getEntries(self):
+        res = set()
+        
+        if self.__entry_linear__:
+            res.add(self.__entry_linear__)
+        if len(self.__entries_flow__):
+            res |= self.__entries_flow__
+        
+        return res
+    
+    def getExits(self):
+        res = set()
+        if self.__exit_flow__:
+            res.add(self.__exit_flow__)
+        if self.__exit_linear__:
+            res.add(self.__exit_linear__)      
+        return res
         
 def dump_basicblock_linkage(blocks):
     keys = blocks.keys()
@@ -328,7 +359,20 @@ def pause():
             time.sleep(10)
     except:
         print "continuing"
+
+class pynary:
+    def __init__(self):
+        self.functions = {}
+        self.externals = {}
         
+    def Load(self, file):
+        lib = pefile.LIB(file)
+       
+        for symbol in lib.symbols:
+            if symbol.is_function():
+                function = Function.create(symbol,self.functions,self.externals)
+
+
 def main():
     #lib = pefile.LIB("libboost_thread-vc80-mt-sgd-1_34_1.lib")
     #lib = pefile.LIB("libboost_wave-vc80-mt-sgd-1_34_1.lib")

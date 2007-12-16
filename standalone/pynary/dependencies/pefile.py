@@ -1061,6 +1061,9 @@ class SymbolStructure(Structure):
                 self.Name = parse_nullterm_string(self.__parent__.COFFStringTable[self.NameOffset:])
             except:
                 raise
+        else:
+            # strip of trailing \x00 for short function names
+            self.Name = parse_nullterm_string(self.Name)
         
         if not self.SectionNumber in [IMAGE_SYM_UNDEFINED, IMAGE_SYM_ABSOLUTE, IMAGE_SYM_DEBUG]:
             self.__section__ = self.__parent__.sections[self.SectionNumber-1]
