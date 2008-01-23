@@ -1,0 +1,14 @@
+FIXES
+
+* Make the driver to report errors when signature is not found
+* Change the communicating with driver metod to IoCtl
+* Speed up the write out procedure
+* Change the image name acquiring method
+
+
+FEATURE REQUESTS:
+
+* Output 15 previous and 15 next assembler instructions to the place
+  where the exception took place
+* Display more information about where did the exception take place
+

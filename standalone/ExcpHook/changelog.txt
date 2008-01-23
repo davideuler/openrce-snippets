@@ -1,0 +1,19 @@
+CHANGELOG
+
+0.0.3b -> 0.0.4
+  * Reformated the driver code a little
+  * Fixed BSoD on race condition when multiple threads tried to add
+    an exception at the same time and the list was full
+  * Fixed the driver sending not fully filled data to the app when
+    the read request was handled at the same time as adding driver info
+  * Resized the exception buffer to 128 exceptions
+  * Added a new stress test to the Test Suite
+
+0.0.3a -> 0.0.3b
+  * ExcpHook.exe now searches for the driver in current directory and in the
+    directory where the exe file is placed.
+
+0.0.3 -> 0.0.3a
+  * Changed KiDispatchException signature to be more generic (thx goes to 
+    Frank Boldewin)
+
