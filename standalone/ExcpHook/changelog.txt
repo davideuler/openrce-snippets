@@ -1,5 +1,21 @@
 CHANGELOG
 
+0.0.4 -> 0.0.5-rc2
+  * Fixed 100% CPU eating bug
+  * Rewritten the code to use IOCTL insted of Write/Read
+  * Added driver status checking mechanism
+  * Commented the source code, made it more readable
+  * Fixed multiCPU/multicore race condition possibility
+  * Fixed BSoD on some systems when patching the kernel
+  * Added some more spinlocks here and there
+  * Fixed BSoD on some kernel versions, the signature seeking
+    mechanism has been changed to a more decent one
+  * Added general/control register logging/display
+  * Added image name acquiring from EPROCESS
+  * Added one-instatnce-at-a-time limit (this is needed due to design)
+  * Added disasembly display (using diStorm lib)
+  * Added some more minor things
+
 0.0.3b -> 0.0.4
   * Reformated the driver code a little
   * Fixed BSoD on race condition when multiple threads tried to add

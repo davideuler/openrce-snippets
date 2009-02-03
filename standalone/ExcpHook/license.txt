@@ -1,4 +1,4 @@
-LICENSE
+EXCPHOOK LICENSE
 Permission is hereby granted to use, copy, modify, and distribute this
 source code, or portions hereof, for any purpose, without fee, subject
 to the following restrictions:
@@ -15,3 +15,5 @@ This software is provided AS IS. The author does not guarantee that
 this program works, is bugfree, etc. The author does not take any
 responsibility for eventual damage caused by this program.
 Use at own risk.
+
+For diStorm license see src/diStorm/distorm64-pkg1.7.27.tar.bz2/Copying
